@@ -1,0 +1,74 @@
+version: "3.7"
+
+services:
+  backend:
+    depends_on: 
+      - database
+    build:
+      context: ./backend
+    image: backend
+    environment:
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_PORT=${DATABASE_PORT}
+      - SERVICE_DOMAIN_NAME=${SERVICE_DOMAIN_NAME}
+      - WSGI_PROCESSES=${WSGI_PROCESSES}
+      - NGINX_PORT=${NGINX_PORT}
+      - NGINX_WORKER_PROCESS=${NGINX_WORKER_PROCESS}
+      - NGINX_KEEP_ALIVE_TIMEOUT=${NGINX_KEEP_ALIVE_TIMEOUT}
+      - NGINX_CLIENT_MAX_BODY_SIZE=${NGINX_CLIENT_MAX_BODY_SIZE}
+    expose:
+      - "80"
+    labels:
+      - "traefik.backend=backed"
+      - "traefik.port=80"
+      - "traefik.frontend.entryPoints=http"
+      - "traefik.frontend.rule=Host:${SERVICE_DOMAIN_NAME};PathPrefix:/api/"
+      - "traefik.docker.network=service-internal"    
+
+  frontend:
+    depends_on:
+      - database
+      - backend
+    build:
+      context: ./frontend
+      args:
+        API_SERVER: ${SERVICE_DOMAIN_NAME}
+    expose:
+      - "80"
+    labels:
+      - "traefik.backend=frontend"
+      - "traefik.port=80"
+      - "traefik.frontend.entryPoints=http"
+      - "traefik.frontend.rule=Host:${SERVICE_DOMAIN_NAME};PathPrefix:/"
+      - "traefik.docker.network=service-internal"
+
+  database:
+    image: postgres:11.3
+    environment:
+      - POSTGRES_USER=demo
+      - POSTGRES_PASSWORD=demo
+      - POSTGRES_DB=demo
+    volumes:
+      - ./data/database/db:/var/lib/postgresql/data
+    labels:
+      - "traefik.enable=false"
+
+  reverse-proxy:
+    image: traefik:v1.7.11
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./reverse_proxy/traefik_http.toml:/etc/traefik/traefik.toml
+      - ./logs/reverse_proxy/access_log:/logs/access_log
+      - ./logs/reverse_proxy/traefik_log:/logs/traefik_log
+
+networks:
+  service-internal:
+    driver: bridge

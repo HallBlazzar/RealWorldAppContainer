@@ -1,0 +1,51 @@
+debug = false
+checkNewVersion = true
+
+#
+# logging
+#
+
+logLevel = "INFO"
+
+[traefikLog]
+filePath = "/logs/traefik_log/traefik.log"
+format = "json"
+
+[accessLog]
+filePath = "/logs/access_log/access.log"
+format = "json"
+
+#
+# entry
+#
+
+defaultEntryPoints = ["https", "http"]
+
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+    [entryPoints.http.redirect]
+    entryPoint = "https"
+  [entryPoints.https]
+  address = ":443"
+  [entryPoints.https.tls]
+  
+[retry]
+attempts = 3
+
+[web]
+address = ":8080"
+
+[docker]
+endpoint = "unix:///var/run/docker.sock"
+domain = "docker.localhost"
+watch = true
+
+[acme]
+email = 
+storage = "acme.json"
+entryPoint = "https"
+OnHostRule = true
+
+  [acme.httpChallenge]
+  entryPoint = "http"
