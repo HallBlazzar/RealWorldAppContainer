@@ -6,7 +6,6 @@ services:
       - database
     build:
       context: ./backend
-    image: backend
     environment:
       - DATABASE_NAME=${DATABASE_NAME}
       - DATABASE_USER=${DATABASE_USER}
