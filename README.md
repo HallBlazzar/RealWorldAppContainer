@@ -2,7 +2,7 @@
 
 ## Architecture ##
 
-`RealWordAppContainer` consists of 3 parts:
+`RealWorldAppContainer` consists of 3 parts:
 
 * frontend: Pure vue.js web frontend. All necessary data are requested from backend through URL with `/api` prefix.
 
@@ -40,7 +40,7 @@ Relation between them is as following shows:
 
 1. Clone the repository.
 
-    `$ git clone https://github.com/HallBlazzar/RealWordAppContainer.git`
+    `$ git clone https://github.com/HallBlazzar/RealWorldAppContainer.git`
 
 2. Clone [Vue.js frontend](https://github.com/gothinkster/vue-realworld-example-app) to `${path_to_project_directory}/frontend/frontend`
 
@@ -52,13 +52,13 @@ Relation between them is as following shows:
 
 4. Configure options in `.env` file based on requirement
 
-    | Option | Description | default value |
+    | Option | Description | Default Value |
     |-|-|-|
     | DATABASE_NAME | database name for storing data for backend | demo |
     | DATABASE_USER | user name to access postgresql | demo |
-    | DATABASE_HOST | database host name, only modify it if you don't want to store data in postgresql database provided by `RealWordAppContainer` | database |
-    | DATABASE_PORT | port number of database service , only modify it if you don't want to store data in postgresql database provided by `RealWordAppContainer` | 5432 |
-    | SERVICE_DOMAIN_NAME | domain name to access `RealWordAppContainer` service | demo.com |
+    | DATABASE_HOST | database host name, only modify it if you don't want to store data in postgresql database provided by `RealWorldAppContainer` | database |
+    | DATABASE_PORT | port number of database service , only modify it if you don't want to store data in postgresql database provided by `RealWorldAppContainer` | 5432 |
+    | SERVICE_DOMAIN_NAME | domain name to access `RealWorldAppContainer` service | demo.com |
     | WSGI_PROCESSES | number of wsgi processes of backend, modify it for performance requirement | 10 |
     | NGINX_WORKER_PROCESS | number of nginx worker processes of backend, modify it for performance requirement | 1 |
     | NGINX_KEEP_ALIVE_TIMEOUT | connection timeout of nginx of backend, modify it for performance requirement | 65 |
@@ -80,7 +80,7 @@ Relation between them is as following shows:
 
 * Why do we need a reverse proxy in this setup?
 
-    Reverse proxy can hide frontend and backend under same domain name, which allow users access the `RealWordAppContainer` service without having to know where frontend and backend actually are, respectively. Reverse proxy also hides detail of architecture, which means even if some extra functions added and these functions are deployed to another containers or hosts, they can still be accessed from same entry-point.
+    Reverse proxy can hide frontend and backend under same domain name, which allow users access the `RealWorldAppContainer` service without having to know where frontend and backend actually are, respectively. Reverse proxy also hides detail of architecture, which means even if some extra functions added and these functions are deployed to another containers or hosts, they can still be accessed from same entry-point.
 
     In addition, reverse-proxy used by this project is [traefik](https://traefik.io/), which also provide basic load-balancing functions such as Least-First or Round-Robin. It allows user deploy multiple replications of service but can still accessed by single domain name.
 
@@ -92,4 +92,4 @@ Relation between them is as following shows:
 
     Actually every applications have states and states of them are determined by input. But stateless application means state of service is not determined by persist data, such as data in database or files, but by input only. For containerized service, if service itself is stateless, it means no matter where it deployed, it will always has same initial state. It can also ensure that even multiple replications of service are deployed, their own state won't effect each other.
 
-    So, more precisely, for `RealWordAppContainer`, frontend and backend are stateless because they only provides static contents and CURD functions to users. However, database is not. Because if different replications are deployed, the data won't be automatically synced which will cause state of different databases are different.
+    So, more precisely, for `RealWorldAppContainer`, frontend and backend are stateless because they only provides static contents and CURD functions to users. However, database is not. Because if different replications are deployed, the data won't be automatically synced which will cause state of different databases are different.
